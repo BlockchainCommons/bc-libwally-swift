@@ -1,16 +1,10 @@
-# Blockchain Commons `$projectname`
+# Blockchain Commons bc-libwally-swift
 
-**`$ProjectDescription`** is …
-
-## Additional Information
-
-The following files contain…
-
-* `$ListOfEssentialDocs`
+**bc-libwally-swift** is a modified fork of [libwally-swift](https://github.com/blockchain/libwally-swift) which depends upon a modified fork of [libwally-core](https://github.com/ElementsProject/libwally-core) v0.7.7. The purpose of this repository is so that BlockchainCommons projects such as [GordianWallet-iOS](https://github.com/BlockchainCommons/GordianWallet-iOS) may rely on our own repositories for dependencies rather then third party repos.
 
 ## Status - Late Alpha
 
-` $projectname`  is currently under active development and in the late alpha testing phase. It should not be used for production tasks until it has had further testing and auditing.
+**bc-libwally-swift**  is currently under active development and in the late alpha testing phase. It should not be used for production tasks until it has had further testing and auditing.
 
 ## Origin, Authors, Copyright & Licenses
 
@@ -26,27 +20,30 @@ This table below also establishes provenance (repository of origin, permalink, a
 
 ### Dependencies
 
-To build  `$projectname` you'll need to use the following tools:
+To build  *bc-libwally-swift* you'll need to use the following tools:
 
-- autotools - Gnu Build System from Free Software Foundation ([intro](https://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html)).
+- Xcode
+- Carthage
+- Brew
 
 ### Derived from…
 
-This  `$projectname` project is either derived from or was inspired by:
+*bc-libwally-swift* project is derived from:
 
-- [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com).
+- [libwally-swift](https://github.com/blockchain/libwally-swift)
+- [libwally-core](https://github.com/ElementsProject/libwally-core)
 
 ### Used with…
 
-These are other projects that work with or leverage `$projectname`:
+These are other projects that work with or leverage *bc-libwally-swift*:
 
-- [community/repo-name/](https://github.com/community/repo-name) — Repo that does what, by [developer](https://github.com/developer)  or from  [community](https://community.com).
+- [GordianWallet-iOS](https://github.com/BlockchainCommons/GordianWallet-iOS)
 
 ## Financial Support
 
-`$projectname` is a project of [Blockchain Commons](https://www.blockchaincommons.com/). We are proudly a "not-for-profit" social benefit corporation committed to open source & open development. Our work is funded entirely by donations and collaborative partnerships with people like you. Every contribution will be spent on building open tools, technologies, and techniques that sustain and advance blockchain and internet security infrastructure and promote an open web.
+*bc-libwally-swift* is a project of [Blockchain Commons](https://www.blockchaincommons.com/). We are proudly a "not-for-profit" social benefit corporation committed to open source & open development. Our work is funded entirely by donations and collaborative partnerships with people like you. Every contribution will be spent on building open tools, technologies, and techniques that sustain and advance blockchain and internet security infrastructure and promote an open web.
 
-To financially support further development of `$projectname` and other projects, please consider becoming a Patron of Blockchain Commons through ongoing monthly patronage as a [GitHub Sponsor](https://github.com/sponsors/BlockchainCommons). You can also support Blockchain Commons with bitcoins at our [BTCPay Server](https://btcpay.blockchaincommons.com/).
+To financially support further development of *bc-libwally-swift* and other projects, please consider becoming a Patron of Blockchain Commons through ongoing monthly patronage as a [GitHub Sponsor](https://github.com/sponsors/BlockchainCommons). You can also support Blockchain Commons with bitcoins at our [BTCPay Server](https://btcpay.blockchaincommons.com/).
 
 ## Contributing
 
