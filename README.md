@@ -31,7 +31,7 @@ To build  *bc-libwally-swift* you'll need to use the following tools:
 *bc-libwally-swift* project is derived from:
 
 - [libwally-swift](https://github.com/blockchain/libwally-swift)
-- [libwally-core](https://github.com/ElementsProject/libwally-core).
+- [libwally-core](https://github.com/ElementsProject/libwally-core)
 
 ### Used with…
 
