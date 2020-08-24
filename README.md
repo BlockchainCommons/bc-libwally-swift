@@ -1,10 +1,10 @@
 # Blockchain Commons bc-libwally-swift
 
-**bc-libwally-swift** is a modified fork of [libwally-swift](https://github.com/blockchain/libwally-swift) which also includes a slightly modified fork of [libwally-core](https://github.com/ElementsProject/libwally-core) v0.7.7. The purpose of this repository is so that BlockchainCommons projects such as [GordianWallet-iOS](https://github.com/BlockchainCommons/GordianWallet-iOS) can rely on our own code for dependencies rather then third party repos which may at anytime make changes that break compatibility.
+**bc-libwally-swift** is a modified fork of [libwally-swift](https://github.com/blockchain/libwally-swift) which depends upon a modified fork of [libwally-core](https://github.com/ElementsProject/libwally-core) v0.7.7. The purpose of this repository is so that BlockchainCommons projects such as [GordianWallet-iOS](https://github.com/BlockchainCommons/GordianWallet-iOS) may rely on our own repositories for dependencies rather then third party repos.
 
 ## Status - Late Alpha
 
-` $projectname`  is currently under active development and in the late alpha testing phase. It should not be used for production tasks until it has had further testing and auditing.
+**bc-libwally-swift**  is currently under active development and in the late alpha testing phase. It should not be used for production tasks until it has had further testing and auditing.
 
 ## Origin, Authors, Copyright & Licenses
 
@@ -28,7 +28,7 @@ To build  *bc-libwally-swift* you'll need to use the following tools:
 
 ### Derived from…
 
-*bc-libwally-swift* project is either derived from:
+*bc-libwally-swift* project is derived from:
 
 - [libwally-swift](https://github.com/blockchain/libwally-swift)
 - [libwally-core](https://github.com/ElementsProject/libwally-core).
