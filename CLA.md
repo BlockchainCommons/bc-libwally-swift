@@ -2,15 +2,15 @@
 
 Version 1.0
 
-Name: `$name`
+Name: Peter Denton
 
-E-Mail: `$email`
+E-Mail: fontainedenton@gmail.com
 
 Legal Jurisdiction: Wyoming, United States of America
 
-Project: https://github.com/BlockchainCommons/bc-lethe-kit
+Project: https://github.com/BlockchainCommons/bc-libwally-swift
 
-Date: `$date`
+Date: Mon, 24th August 2020
 
 ## Purpose
 
