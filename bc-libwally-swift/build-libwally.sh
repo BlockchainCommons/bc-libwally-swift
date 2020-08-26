@@ -1,69 +1,97 @@
 #!/usr/bin/env sh
 set -e # abort if any command fails
 
-MIN_IOS_VERSION="10.0"
-PROJ_ROOT="${PWD}/CLibWally/libwally-core"
-BUILD_ROOT=${PROJ_ROOT}/build
-OUTPUT_DIR=${BUILD_ROOT}/fat
+device=0
+simulator=0
+clean=0
 
-build()
-{
-  ARCH=$1
-  TARGET=$2
-  HOST=$3
-  SDK=$4
-  BITCODE=$5
-  VERSION=$6
-  SDK_PATH=`xcrun -sdk ${SDK} --show-sdk-path`
+while getopts "h?dsc" opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    d)  device=1
+        ;;
+    s)  simulator=1
+        ;;
+    c)  clean=1
+        ;;
+    esac
+done
 
-  export PREFIX=${BUILD_ROOT}/${ARCH}
-  export CFLAGS="-O3 -arch ${ARCH} -isysroot ${SDK_PATH} ${BITCODE} ${VERSION} -target ${TARGET}"
-  export CXXFLAGS="-O3 -arch ${ARCH} -isysroot ${SDK_PATH} ${BITCODE} ${VERSION} -target ${TARGET}"
+if [ $device == 0 ] && [ $simulator == 0 ]; then
+  echo "Set device (-d) and/or simulator (-s)"
+  exit 1
+fi
 
-  export LDFLAGS="-arch ${ARCH}"
-  export CC="$(xcrun --sdk ${SDK} -f clang) -arch ${ARCH} -isysroot ${SDK_PATH}"
-  export CXX="$(xcrun --sdk ${SDK} -f clang++) -arch ${ARCH} -isysroot ${SDK_PATH}"
+if [ $device == 1 ] && [ $simulator == 1 ]; then
+  if [ $clean == 0 ]; then
+    echo "Set clean (-c) when building both targets"
+    exit 1
+  fi
+  echo "Build libwally-core for device and simulator and combine into a single library..."
+fi
 
-  pushd ${PROJ_ROOT}
+cd CLibWally/libwally-core
 
-  PKG_CONFIG_ALLOW_CROSS=1 PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig ./configure --disable-shared --host=${HOST} --enable-static --prefix=$PREFIX
+if [ $clean == 1 ]; then
+  rm -rf build
+fi
 
-  make clean
-  make
-  make install
-
-  popd
-}
-
-combine()
-{
-  LIB_NAME=$1
-
-  mkdir -p ${OUTPUT_DIR}/lib
-  lipo -create -output $OUTPUT_DIR/lib/${LIB_NAME}.a \
-    ${BUILD_ROOT}/arm64/lib/${LIB_NAME}.a \
-    ${BUILD_ROOT}/armv7/lib/${LIB_NAME}.a \
-    ${BUILD_ROOT}/i386/lib/${LIB_NAME}.a \
-    ${BUILD_ROOT}/x86_64/lib/${LIB_NAME}.a
-}
-
-rm -rf ${BUILD_ROOT}
-if [ ! -d ${BUILD_ROOT} ]; then
-  pushd ${PROJ_ROOT}
+if [ ! -d "build" ]; then
   sh ./tools/autogen.sh
-  popd
-  mkdir -p ${BUILD_ROOT}
+fi
+export CC=`xcrun -find clang`
+export CXX=`xcrun -find clang++`
+
+set +v
+if [ $simulator == 1 ]; then
+  if [ ! -d "build" ]; then
+    echo "Configure and compile for the simulator..."
+    set -v
+    export CFLAGS="-O3 -arch x86_64 -arch i386 -fembed-bitcode-marker -mios-simulator-version-min=10.0 -isysroot `xcrun -sdk iphonesimulator --show-sdk-path`"
+    export CXXFLAGS="-O3 -arch x86_64 -arch i386 -fembed-bitcode-marker -mios-simulator-version-min=10.0 -isysroot `xcrun -sdk iphonesimulator --show-sdk-path`"
+    mkdir -p build
+    ./configure --disable-shared --host=x86_64-apple-darwin --enable-static
+    if [ $clean == 1 ]; then
+      set -v # display commands
+      make clean
+    fi
+  fi
+  make
+  if [ $device == 1 ]; then
+    cp src/.libs/libwallycore.a build/libwallycore-simulator.a
+  fi
+fi
+
+if [ $device == 1 ]; then
+  set +v
+  if [ ! -d "build" ] || [ $clean == 1 ]; then
+    echo "Configure and cross-compile for the device..."
+    set -v
+    export CFLAGS="-O3 -arch arm64 -arch arm64e -arch armv7 -arch armv7s -fembed-bitcode -mios-version-min=10.0 -isysroot `xcrun -sdk iphoneos --show-sdk-path`"
+    export CXXFLAGS="-O3 -arch arm64 -arch arm64e -arch armv7 -arch armv7s -isysroot -fembed-bitcode -mios-version-min=10.0 -isysroot `xcrun -sdk iphoneos --show-sdk-path`"
+    mkdir -p build
+    ./configure --disable-shared --host=aarch64-apple-darwin14 --enable-static
+    if [ $clean == 1 ]; then
+      make clean
+    fi
+  fi
+  make
+  set +v
+  if [ $simulator == 1 ]; then
+    set -v
+    cp src/.libs/libwallycore.a build/libwallycore-device.a
+  fi
 fi
 
 set +v
+if [ $device == 1 ] && [ $simulator == 1 ]; then
+  echo "Combine simulator and device libraries..."
+  set -v
+  lipo -create build/libwallycore-device.a build/libwallycore-simulator.a -o src/.libs/libwallycore.a
+fi
 
-build "arm64" "aarch64-apple-ios" "arm-apple-darwin" "iphoneos" "-fembed-bitcode" "-mios-version-min=${MIN_IOS_VERSION}"
-build "armv7" "armv7-apple-ios" "arm-apple-darwin" "iphoneos" "-fembed-bitcode" "-mios-version-min=${MIN_IOS_VERSION}" # MIN_IOS_VERSION must be one of arm7 supported ones to. Else remove this line.
-build "i386" "i386-apple-ios" "i386-apple-darwin" "iphonesimulator" "-fembed-bitcode-marker" "-mios-simulator-version-min=${MIN_IOS_VERSION}" # same as arm7:  MIN_IOS_VERSION must be one of arm7 supported ones.
-build "x86_64" "x86_64-apple-ios13.0-macabi" "x86_64-apple-darwin" "macosx" "-fembed-bitcode" "-mios-version-min=${MIN_IOS_VERSION}" # This is the build that runs under Catalyst
-# build "x86_64" "x86_64-apple-ios" "x86_64-apple-darwin" "iphonesimulator" "embed-bitcode-market" "-mios-simulator-version-min=${MIN_IOS_VERSION}" #obsolete due to x86_64-apple-ios13.0-macabi
-
-combine "libsecp256k1"
-combine "libwallycore"
-mkdir -p ${OUTPUT_DIR}/include/
-cp -R ${BUILD_ROOT}/armv7/include/* ${OUTPUT_DIR}/include/
+set +v
+echo "Done"
